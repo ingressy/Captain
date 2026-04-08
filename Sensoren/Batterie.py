@@ -15,7 +15,7 @@ SENSITIVITY: float = 0.185  # 5A Version
 CAL_FACTOR: float = 0.74
 OFFSET: float = 2.627
 
-def initmcp() -> tuple[AnalogIn, AnalogIn, AnalogIn, AnalogIn]:
+def initmcp() -> tuple:
     max_retries = 3
     #probiert maximal dreimal den Chip zu initialisieren
     for i in range(max_retries):
@@ -32,10 +32,21 @@ def initmcp() -> tuple[AnalogIn, AnalogIn, AnalogIn, AnalogIn]:
             chan1 = AnalogIn(mcp, MCP.P1)
             chan2 = AnalogIn(mcp, MCP.P2)
             chan3 = AnalogIn(mcp, MCP.P3)
-            return chan0, chan1, chan2, chan3
+            return spi, cs, chan0, chan1, chan2, chan3
         except Exception as e:
             logging.error(f"Exception while connecting to MCP3204: {e}")
     raise RuntimeError ("MCP connection failed")
+
+def deinitmcp(spi, cs):
+    try:
+        cs.deinit()
+    except Exception:
+        pass
+
+    try:
+        spi.deinit()
+    except Exception:
+        pass
 
 def read_voltage(chan: AnalogIn) -> float:
     if chan is None:
@@ -57,7 +68,7 @@ def read_ampere(chan: AnalogIn) -> float:
         logging.error(f"Ampere LeseError: {e}")
         raise
 
-def batterie_tiefenentladung(chan: AnalogIn) -> bool:
+def batterie_leer(chan: AnalogIn) -> bool:
     if chan is None:
         raise ValueError("MCP nicht initialisiert?")
     try:

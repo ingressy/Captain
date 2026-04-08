@@ -5,18 +5,16 @@ import digitalio
 import pvmio
 import time
 
-#own files
 import pins
 
-
-#death run test or so for the Rear Motors
+#baby burn baby burn
 def deathrun(t: int, dir: bool, speed: int) -> None:
     dir2 = digitalio.DigitalInOut(pins.DIR2)
     dir2.direction = digitalio.Direction.OUTPUT
 
     pvm2 = pvmio.PVMOUT(pins.PVM2, frequency=1000, duty_cycle=0)
 
-    # true = forward
+    # true = vorwaerts
     dir2.value = dir
     pvm2.duty_cycle = int(speed/100*65535) # 16-bit: 0–65535
 
