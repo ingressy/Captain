@@ -7,9 +7,11 @@ from Comm import Comm
 
 def main():
     print("===Testmode ===")
-    t1 = threading.Thread(target=Comm.connHandler)
-    t1.start()
     adc = ADC.ADC()
+    t1 = threading.Thread(target=Comm.connHandler, args=(adc))
+    t1.start()
+    t2 = threading.Thread(target=Comm.udpHandler)
+    t2.start()
 
     print(adc.get_ampere(0))
     print(adc.get_12voltage(1))
@@ -21,7 +23,7 @@ def main():
     motors.vorwaerts(30, 100)
 
 
-    adc.de_ADC()
+    # adc.de_ADC()
     print("===Testmode fertig!===")
 
 if __name__ == '__main__':
