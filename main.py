@@ -1,19 +1,22 @@
 import time
 
-from sensors import battery_ampere
-from sensors import battery_voltage
+from Sensoren import ADC
+from motors import deathrun
 
 def main():
     print("===Testmode ===")
-    chan0 = battery_ampere.initmcp()
-    chan1 = battery_voltage.initmcp()
-    while True:
-        battery_ampere.readampere(chan0)
-        battery_voltage.readvoltage(chan1)
-        time.sleep(0.5)
+    adc = ADC.ADC()
+
+    adc.get_ampere(0)
+    adc.get_12voltage(1)
 
 
+    print("===Dreht Motoren in 30Sek!===")
+    time.sleep(30)
+    deathrun.deathrun(5,True,25)
 
+    adc.de_ADC()
+    print("===Testmode fertig!===")
 
 if __name__ == '__main__':
     main()
