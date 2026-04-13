@@ -1,10 +1,14 @@
 #die person die die datei umbenennt wird sterben
+import logging
+
 import serial
 
 class pyGPS:
     def __init__(self, port="/dev/ttyACM3", baud=9600):
-        self.ser = serial.Serial(port=port, baudrate=baud)
-
+        try:
+            self.ser = serial.Serial(port=port, baudrate=baud)
+        except serial.serialutil.SerialException:
+            logging.error("Serialer Port für die GPS-Empfänger kann nicht geöffnet werden!")
 
     def get_raw(self):
         return self.ser.readline().decode("utf-8").strip()
