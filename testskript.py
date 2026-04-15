@@ -18,8 +18,11 @@ try:
     # Motor 2 (Fahrmotor)
     motor_dir = digitalio.DigitalInOut(pins.DIR2)
     motor_dir.direction = digitalio.Direction.OUTPUT
+    servo_dir = digitalio.DigitalInOut(pins.DIR1)
+    servo_dir.direction = digitalio.Direction.OUTPUT
     # Frequenz 1000Hz ist gut für die meisten Motortreiber
     motor_pwm = pwmio.PWMOut(pins.PWM2, frequency=1000, duty_cycle=0)
+    servo_pwm = pwmio.PWMOut(pins.PWM1, frequency=1000, duty_cycle=0)
 
     print("[SYSTEM] Motor-Hardware bereit.")
 except Exception as e:
@@ -75,6 +78,25 @@ def set_motor_speed(y_raw):
         # Joystick ist in Neutralstellung oder darunter -> Stopp
         motor_pwm.duty_cycle = 0
         return 0.0
+def set_servo_speed(x_raw):
+    if x_raw > DEADZONE:
+        speed_pct = ((x_raw - DEADZONE) / (MAX_ADC - DEADZONE)) * 100
+        speed_pct = max(0.0, min(100.0, speed_pct))
+        servo_dir.value = True
+        duty = int((speed_pct / 100) * 65535)
+        servo_pwm.duty_cycle = duty
+        return speed_pct
+    elif x_raw < DEADZONE_INV:
+        speed_pct = ((DEADZONE_INV - x_raw) / DEADZONE_INV) * 100
+        speed_pct = max(0.0, min(100.0, speed_pct))
+        servo_dir.value = False
+        duty = int((speed_pct / 100) * 65535)
+        servo_pwm.duty_cycle = duty
+        return speed_pct
+    else:
+        servo_pwm.duty_cycle = 0
+        return 0.0
+
 
 
 # --- MAIN LOOP ---
@@ -117,6 +139,7 @@ try:
 
                 # Motor-Geschwindigkeit basierend auf Y aktualisieren
                 current_speed = set_motor_speed(y)
+                current_rotation = set_servo_speed(x)
 
                 if current_speed > 0:
                     print(f"[DRIVE] Joystick: {y} | Speed: {round(current_speed, 1)}%   ", end="\r")
