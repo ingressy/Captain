@@ -8,7 +8,7 @@ import logging
 import adafruit_mcp3xxx.mcp3204 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
-import pins
+import globals
 
 VOLTAGE_FACTOR: float = 5.659637188
 SENSITIVITY: float = 0.185  # 5A Version

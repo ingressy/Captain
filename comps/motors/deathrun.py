@@ -5,7 +5,7 @@ import digitalio
 import pwmio
 import time
 
-import pins
+import globals
 
 #baby burn baby burn
 def deathrun(t: int, dir: bool, speed: int) -> None:

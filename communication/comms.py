@@ -2,8 +2,11 @@ import logging
 import socket
 import struct
 import random
+import threading
 
 from communication.inputHandler import inputHandler
+from comps.motors.motors import keineAhnungDigga, stop
+import globals
 
 latest_tcp_msg = ""
 active_tcp_connection = None
@@ -61,9 +64,11 @@ def handle_incoming_udp(sock):
 
 def udpHandler():
     if active_tcp_connection:
+        t = threading.current_thread()
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind(('0.0.0.0', UDP_PORT))
-        while True:
+        while getattr(t, "do_run", True):
+            data, addr = sock.recvfrom(1024)
             try:
                 data, addr = sock.recvfrom(1024)
                 if len(data) <= 5:
@@ -71,7 +76,7 @@ def udpHandler():
                     latest_udp_data_x = x
                     latest_udp_data_y = y
                     latest_udp_data_mode = mode
-                    inputHandler(latest_udp_data_y)
+                    inputHandler(latest_udp_data_x, latest_udp_data_y)
             except: pass
 
 def connHandler(adc):
@@ -101,6 +106,8 @@ def connHandler(adc):
                     except BlockingIOError:
                         pass
                 else:
+                    t1 = threading.Thread(target=udpHandler)
+                    t1.start()
                     try:
                         data = active_tcp_connection.recv(1024)
                         if not data:
@@ -109,8 +116,14 @@ def connHandler(adc):
                         else:
                             msg = data.decode('utf-8', errors='ignore').strip()
                             logging.debug(msg)
+
                     except BlockingIOError:
                         pass
                     except Exception:
                         active_tcp_connection = None
+        finally:
+            t1.do_run = False
+            stop()
+            keineAhnungDigga()
+
 
