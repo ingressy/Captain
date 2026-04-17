@@ -6,7 +6,6 @@ VELOCITY = 50
 DEADZONE_POS = 1950
 DEADZONE_NEG = 1750
 def inputHandler(x,y):
-    if active_tcp_connection:
         if current_mode == 1 or current_mode == 2:
             if y > DEADZONE_POS:
                 speed = ((y - DEADZONE_POS) / (4095 - DEADZONE_POS)) * VELOCITY
@@ -32,9 +31,6 @@ def inputHandler(x,y):
         else:
             stop()
             keineAhnungDigga()
-    elif current_mode == 0:
-        stop()
-        keineAhnungDigga()
 def msgHanlder(msg):
     if ":" in msg:
         key, value = msg.split(":")
