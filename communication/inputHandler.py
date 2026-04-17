@@ -1,4 +1,3 @@
-from communication.comms import active_tcp_connection
 from comps.motors.motors import vorwaerts, rueckwaerts, stop, rechts, links, keineAhnungDigga
 import globals
 from globals import current_mode
