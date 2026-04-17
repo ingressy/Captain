@@ -94,7 +94,6 @@ def connHandler(adc):
     udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     udp_sock.bind(("0.0.0.0", UDP_PORT))
     udp_sock.settimeout(0.01)
-    t1.start()
     while True:
         try:
             while True:
