@@ -5,7 +5,7 @@ VELOCITY = 50
 LENKUNG = 75
 DEADZONE_POS = 1950
 DEADZONE_NEG = 1750
-MittelCordsRechts = 1.36
+MittelCordsRechts = 1.32
 MittelCordsLinks = 1.38
 def inputHandler(x,y, motors, adc):
     currentLenkung = adc.get_lenkung(2)
